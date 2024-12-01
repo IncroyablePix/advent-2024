@@ -74,22 +74,17 @@ int main(int argc, char** argv)
 
 #pragma region Part Two
     {
-        std::unordered_map<Number, Number> occurences;
-        for (const auto& number : firstList)
+        std::unordered_map<Number, size_t> occurences;
+        auto sumOfSimilarities = std::accumulate(firstList.begin(), firstList.end(), 0, [&](size_t sum, const auto& number)
         {
-            occurences[number] = 0;
-        }
-
-        for (const auto& number : secondList)
-        {
-            if (const auto it = occurences.find(number); it != occurences.end())
+            if (occurences.contains(number))
             {
-                it->second++;
+                return sum + number * occurences.at(number);
             }
-        }
 
-        auto similarities = std::ranges::views::transform(occurences, [](const auto& pair) { return pair.first * pair.second; });
-        auto sumOfSimilarities = std::accumulate(similarities.begin(), similarities.end(), 0);
+            return sum + number * (occurences[number] = std::count(secondList.begin(), secondList.end(), number));
+        });
+
         std::cout << "Similarity score: " << sumOfSimilarities << std::endl;
     }
 #pragma endregion
