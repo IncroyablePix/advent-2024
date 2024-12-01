@@ -74,16 +74,21 @@ Number get_similarity_score(const List& list1, const List& list2)
 
 int main(const int argc, const char** argv)
 {
+    auto start = std::chrono::high_resolution_clock::now();
     auto [firstList, secondList] =
         argc < 2 || !exists(std::filesystem::path(argv[1]))
         ? ExampleSampleProvider::get_lists()
         : FileListsProvider::get_lists(argv[1], 1000);
 
     const auto distanceBetweenLists = get_distance_between_lists(firstList, secondList);
-    std::cout << "Distance between lists: " << distanceBetweenLists << std::endl;
 
     const auto similarityScore = get_similarity_score(firstList, secondList);
-    std::cout << "Similarity score: " << similarityScore << std::endl;
+    std::cout << "Distance between lists: " << distanceBetweenLists << "\n"
+        << "Similarity score: " << similarityScore << "\n\n";
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    std::cout << "Total execution time: " << duration << " microseconds." << std::endl;
 
     return EXIT_SUCCESS;
 }
