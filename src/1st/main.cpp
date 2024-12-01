@@ -16,15 +16,11 @@ namespace ExampleSampleProvider
 {
     [[nodiscard]] std::pair<List, List> get_lists()
     {
-        List firstList{
-            3, 4, 2, 1, 3, 3,
-        };
-        List secondList{
-            4, 3, 5, 3, 9, 3,
-        };
+        List firstList { 3, 4, 2, 1, 3, 3, };
+        List secondList { 4, 3, 5, 3, 9, 3, };
         return {firstList, secondList};
     }
-}; // namespace ExampleSampleProvider
+}
 
 namespace FileListsProvider
 {
@@ -49,45 +45,45 @@ namespace FileListsProvider
 
         return {firstList, secondList};
     }
-}; // namespace FileListsProvider
+}
 
-int main(int argc, char** argv)
+Number get_distance_between_lists(List& list1, List& list2)
 {
-    auto [firstList, secondList] = argc < 2 || argv[1] == "example"
-        ? ExampleSampleProvider::get_lists()
-        : FileListsProvider::get_lists("./src/1st/lists.txt", 1000);
+    std::ranges::sort(list1);
+    std::ranges::sort(list2);
 
-#pragma region Part One
+    auto deltas = std::ranges::views::zip(list1, list2) |
+        std::ranges::views::transform([](const std::pair<Number, Number> pair){ return std::abs(pair.first - pair.second); });
+
+    return std::accumulate(deltas.begin(), deltas.end(), 0);
+}
+
+Number get_similarity_score(const List& list1, const List& list2)
+{
+    std::unordered_map<Number, size_t> occurrences;
+    return std::accumulate(list1.begin(), list1.end(), 0, [&](size_t sum, const auto& number)
     {
-        std::ranges::sort(firstList);
-        std::ranges::sort(secondList);
-
-        auto deltas = std::ranges::views::zip(firstList, secondList) |
-            std::ranges::views::transform([](std::pair<Number, Number> pair)
-                                          { return std::abs(pair.first - pair.second); });
-
-        auto distanceBetweenLists = std::accumulate(deltas.begin(), deltas.end(), 0);
-
-        std::cout << "Distance between lists: " << distanceBetweenLists << std::endl;
-    }
-#pragma endregion
-
-#pragma region Part Two
-    {
-        std::unordered_map<Number, size_t> occurences;
-        auto sumOfSimilarities = std::accumulate(firstList.begin(), firstList.end(), 0, [&](size_t sum, const auto& number)
+        if (occurrences.contains(number))
         {
-            if (occurences.contains(number))
-            {
-                return sum + number * occurences.at(number);
-            }
+            return sum + number * occurrences.at(number);
+        }
 
-            return sum + number * (occurences[number] = std::count(secondList.begin(), secondList.end(), number));
-        });
+        return sum + number * (occurrences[number] = std::count(list2.begin(), list2.end(), number));
+    });
+}
 
-        std::cout << "Similarity score: " << sumOfSimilarities << std::endl;
-    }
-#pragma endregion
+int main(const int argc, const char** argv)
+{
+    auto [firstList, secondList] =
+        argc < 2 || !exists(std::filesystem::path(argv[1]))
+        ? ExampleSampleProvider::get_lists()
+        : FileListsProvider::get_lists(argv[1], 1000);
+
+    const auto distanceBetweenLists = get_distance_between_lists(firstList, secondList);
+    std::cout << "Distance between lists: " << distanceBetweenLists << std::endl;
+
+    const auto similarityScore = get_similarity_score(firstList, secondList);
+    std::cout << "Similarity score: " << similarityScore << std::endl;
 
     return EXIT_SUCCESS;
 }
