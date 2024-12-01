@@ -114,7 +114,8 @@ build/
 ### others ###
 .clang-format
 CMakeLists.txt
-.idea/codeStyles/*.xml
+.idea/codeStyles/codeStyleConfig.xml
+.idea/codeStyles/Project.xml
 
 
 # End of https://www.toptal.com/developers/gitignore/api/xmake,cmake,clion+all
