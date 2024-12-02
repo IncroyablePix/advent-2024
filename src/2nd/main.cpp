@@ -53,9 +53,8 @@ namespace FileReportsProvider
     }
 }
 
-bool is_safe(const Report& report, bool problemDampener = false)
+bool is_safe(const Report& report)
 {
-    auto badLevelTolerate = problemDampener;
     enum Direction: uint8_t { Undefined, Increase, Decrease };
     if (report.empty())
     {
@@ -72,12 +71,6 @@ bool is_safe(const Report& report, bool problemDampener = false)
         if (const auto absDelta = std::abs(delta);
             absDelta < 1 || absDelta > 3)
         {
-            if (badLevelTolerate)
-            {
-                badLevelTolerate = false;
-                continue;
-            }
-
             return false;
         }
         #pragma endregion
@@ -96,12 +89,6 @@ bool is_safe(const Report& report, bool problemDampener = false)
 
         if (direction != Undefined && lastDirection != Undefined && lastDirection != direction)
         {
-            if (badLevelTolerate)
-            {
-                badLevelTolerate = false;
-                continue;
-            }
-
             return false;
         }
         #pragma endregion
@@ -117,12 +104,30 @@ bool is_safe(const Report& report, bool problemDampener = false)
 
 bool is_safe_with_problem_dampener(const Report& report)
 {
-    return is_safe(report, true);
+    auto isSafe = is_safe(report);
+
+    if (isSafe)
+    {
+        return true;
+    }
+
+    for (auto i = 0; i < report.size(); ++i)
+    {
+        Report reportWithDampener(report);
+        reportWithDampener.erase(reportWithDampener.begin() + i);
+
+        if (is_safe(reportWithDampener))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool is_safe_without_problem_dampener(const Report& report)
 {
-    return is_safe(report, false);
+    return is_safe(report);
 }
 
 int main(const int argc, const char** argv)
