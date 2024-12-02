@@ -8,3 +8,8 @@ target("1st", function()
     set_kind("binary")
     add_files("src/1st/**.cpp")
 end)
+
+target("2nd", function()
+    set_kind("binary")
+    add_files("src/2nd/**.cpp")
+end)
