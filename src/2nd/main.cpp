@@ -10,7 +10,7 @@
 typedef int32_t Level;
 typedef std::vector<Level> Report;
 
-namespace ExampleSampleProvider
+namespace FirstExampleSampleProvider
 {
     [[nodiscard]] std::vector<Report> get_reports()
     {
@@ -135,7 +135,7 @@ int main(const int argc, const char** argv)
     const auto start = std::chrono::high_resolution_clock::now();
 
     auto reports = argc < 2 || !exists(std::filesystem::path(argv[1]))
-        ? ExampleSampleProvider::get_reports()
+        ? FirstExampleSampleProvider::get_reports()
         : FileReportsProvider::get_reports(argv[1], 1000);
 
     const auto safeCount = std::ranges::count_if(reports, is_safe_without_problem_dampener);

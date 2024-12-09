@@ -9,7 +9,7 @@
 #include <utility>
 #include <variant>
 
-namespace ExampleSampleProvider
+namespace FirstExampleSampleProvider
 {
     [[nodiscard]] std::string get_memory()
     { return "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))"; }
@@ -111,7 +111,7 @@ int main(const int argc, const char** argv)
     const auto start = std::chrono::high_resolution_clock::now();
 
     const auto reports = argc < 2 || !exists(std::filesystem::path(argv[1]))
-        ? ExampleSampleProvider::get_memory()
+        ? FirstExampleSampleProvider::get_memory()
         : FileMemoryProvider::get_memory(argv[1]);
 
     const auto reportsWithConditions = argc < 2 || !exists(std::filesystem::path(argv[1]))

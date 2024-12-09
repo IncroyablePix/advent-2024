@@ -12,7 +12,7 @@
 typedef int32_t Number;
 typedef std::vector<Number> List;
 
-namespace ExampleSampleProvider
+namespace FirstExampleSampleProvider
 {
     [[nodiscard]] std::pair<List, List> get_lists()
     {
@@ -77,7 +77,7 @@ int main(const int argc, const char** argv)
     const auto start = std::chrono::high_resolution_clock::now();
     auto [firstList, secondList] =
         argc < 2 || !exists(std::filesystem::path(argv[1]))
-        ? ExampleSampleProvider::get_lists()
+        ? FirstExampleSampleProvider::get_lists()
         : FileListsProvider::get_lists(argv[1], 1000);
 
     const auto distanceBetweenLists = get_distance_between_lists(firstList, secondList);

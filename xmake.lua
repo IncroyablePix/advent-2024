@@ -18,3 +18,8 @@ target("3rd", function()
     set_kind("binary")
     add_files("src/3rd/**.cpp")
 end)
+
+target("4th", function()
+    set_kind("binary")
+    add_files("src/4th/**.cpp")
+end)
